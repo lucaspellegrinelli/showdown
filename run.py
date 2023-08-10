@@ -107,7 +107,6 @@ async def showdown():
     )
     await ps_websocket_client.login()
 
-    battles_run = 0
     wins = 0
     losses = 0
     while True:
@@ -115,6 +114,14 @@ async def showdown():
             ShowdownConfig.log_handler.do_rollover(datetime.now().strftime("%Y-%m-%dT%H:%M:%S.log"))
 
         generate_new_team()
+
+        ShowdownConfig.battle_bot_module = random.choice([
+            "safest",
+            "nash_equilibrium",
+            "team_datasets",
+            "most_damage"
+        ])
+
         team = load_team(ShowdownConfig.team)
         if ShowdownConfig.bot_mode == constants.CHALLENGE_USER:
             await ps_websocket_client.challenge_user(
