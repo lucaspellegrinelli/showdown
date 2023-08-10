@@ -110,6 +110,8 @@ async def showdown():
     while True:
         if ShowdownConfig.log_to_file:
             ShowdownConfig.log_handler.do_rollover(datetime.now().strftime("%Y-%m-%dT%H:%M:%S.log"))
+
+        generate_new_team()
         team = load_team(ShowdownConfig.team)
         if ShowdownConfig.bot_mode == constants.CHALLENGE_USER:
             await ps_websocket_client.challenge_user(
@@ -137,9 +139,9 @@ async def showdown():
         logger.info("W: {}\tL: {}".format(wins, losses))
         check_dictionaries_are_unmodified(original_pokedex, original_move_json)
 
-        battles_run += 1
-        if battles_run >= ShowdownConfig.run_count:
-            break
+        # battles_run += 1
+        # if battles_run >= ShowdownConfig.run_count:
+        #     break
 
 
 if __name__ == "__main__":
