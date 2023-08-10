@@ -1,0 +1,107 @@
+Kyogre @ Leftovers
+Ability: Drizzle
+EVs: 252 HP / 4 Def / 252 SpA
+Modest Nature
+- Calm Mind
+- Surf
+- Thunder
+- Substitute
+
+Kyogre @ Leftovers
+Ability: Drizzle
+EVs: 108 HP / 148 Def / 252 SpA
+Modest Nature
+- Calm Mind
+- Surf
+- Thunder
+- Ice Beam
+
+Kyogre @ Leftovers
+Ability: Drizzle
+EVs: 240 HP / 244 Def / 24 Spe
+Modest Nature
+- Surf
+- Calm Mind
+- Rest
+- Sleep Talk
+
+Kyogre @ Leftovers
+Ability: Drizzle
+EVs: 108 HP / 148 Def / 252 SpA
+Modest Nature
+- Water Spout
+- Ice Beam
+- Rest
+- Sleep Talk
+
+Mewtwo @ Lum Berry
+Ability: Pressure
+EVs: 4 Atk / 252 SpA / 252 Spe
+Mild Nature
+- Ice Beam
+- Thunder
+- Self-Destruct
+- Calm Mind
+
+Mewtwo @ Leftovers
+Ability: Pressure
+EVs: 204 HP / 208 Atk / 96 Spe
+Jolly Nature
+- Substitute
+- Bulk Up
+- Focus Punch
+- Shadow Ball
+
+Mewtwo @ Leftovers
+Ability: Pressure
+EVs: 204 HP / 84 SpA / 220 Spe
+Modest Nature
+- Calm Mind
+- Thunder
+- Ice Beam
+- Substitute
+
+Mewtwo @ Leftovers
+Ability: Pressure
+EVs: 252 HP / 160 SpD / 96 Spe
+Timid Nature
+- Taunt
+- Recover
+- Toxic
+- Flamethrower
+
+Mewtwo @ Leftovers
+Ability: Pressure
+EVs: 252 HP / 160 Def / 96 Spe
+Timid Nature
+- Recover
+- Taunt
+- Calm Mind
+- Ice Beam
+
+Rayquaza @ Choice Band
+Ability: Air Lock
+EVs: 252 HP / 228 Atk / 28 SpD
+Adamant Nature
+- Hidden Power Bug
+- Rock Slide
+- Earthquake
+- Extreme Speed
+
+Rayquaza @ Leftovers
+Ability: Air Lock
+EVs: 96 HP / 252 Atk / 160 Spe
+Adamant Nature
+- Dragon Dance
+- Hidden Power Ghost
+- Earthquake
+- Extreme Speed
+
+Rayquaza @ Leftovers
+Ability: Air Lock
+EVs: 40 HP / 252 SpA / 216 Spe
+Modest Nature
+- Crunch
+- Ice Beam
+- Thunderbolt
+- Fire Blast
