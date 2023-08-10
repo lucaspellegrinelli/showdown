@@ -57,7 +57,10 @@ def generate_new_team():
     team_dump_path = "teambuilderdata/gen3ou_teams.txt"
     uber_replacements_path = "teambuilderdata/uber_replacements.txt"
     output_path = "teams/teams/desafiopokemon/current"
-    team = generate_gen3_team(team_dump_path, uber_replacements_path)
+
+    team = None
+    while team is None or "Blissey" in team:
+        team = generate_gen3_team(team_dump_path, uber_replacements_path)
 
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
     with open(output_path, "w") as f:
