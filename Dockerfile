@@ -6,6 +6,27 @@ COPY --from=debian-with-gambit /usr/local/bin/gambit-enummixed /usr/local/bin
 
 WORKDIR /showdown
 
+ARG BATTLE_BOT=nash_equilibrium
+ENV BATTLE_BOT=$BATTLE_BOT
+
+ARG WEBSOCKET_URI=sim.smogon.com:8000
+ENV WEBSOCKET_URI=$WEBSOCKET_URI
+
+ARG PS_USERNAME
+ENV PS_USERNAME=$PS_USERNAME
+
+ARG PS_PASSWORD
+ENV PS_PASSWORD=$PS_PASSWORD
+
+ARG BOT_MODE=ACCEPT_CHALLENGE
+ENV BOT_MODE=$BOT_MODE
+
+ARG POKEMON_MODE=gen3ubers
+ENV POKEMON_MODE=$POKEMON_MODE
+
+ARG TEAM_NAME=desafiopokemon/current
+ENV TEAM_NAME=$TEAM_NAME
+
 COPY requirements.txt /showdown/requirements.txt
 COPY requirements-docker.txt /showdown/requirements-docker.txt
 
