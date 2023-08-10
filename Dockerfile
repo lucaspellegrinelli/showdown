@@ -18,6 +18,7 @@ COPY data /showdown/data
 COPY run.py /showdown/run.py
 COPY showdown /showdown/showdown
 COPY teams /showdown/teams
+COPY teambuilderdata /showdown/teambuilderdata
 
 ENV PYTHONIOENCODING=utf-8
 
