@@ -107,6 +107,7 @@ async def showdown():
     )
     await ps_websocket_client.login()
 
+    battles_run = 0
     wins = 0
     losses = 0
     while True:
@@ -141,9 +142,9 @@ async def showdown():
         logger.info("W: {}\tL: {}".format(wins, losses))
         check_dictionaries_are_unmodified(original_pokedex, original_move_json)
 
-        # battles_run += 1
-        # if battles_run >= ShowdownConfig.run_count:
-        #     break
+        battles_run += 1
+        if battles_run >= ShowdownConfig.run_count:
+            break
 
 
 if __name__ == "__main__":
