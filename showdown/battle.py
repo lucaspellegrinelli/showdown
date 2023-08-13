@@ -60,7 +60,7 @@ class Battle(ABC):
     def __init__(self, battle_tag):
         self.battle_tag = battle_tag
         self.user = Battler()
-        self.opponent = Battler()
+        self.opponent = self.build_opponent()
         self.weather = None
         self.field = None
         self.trick_room = False
@@ -78,6 +78,57 @@ class Battle(ABC):
         self.time_remaining = None
 
         self.request_json = None
+
+    def build_opponent(self):
+        opponent = Battler()
+
+        exeggutor = Pokemon("exeggutor", 100, "lonely", (0, 0, 0, 204, 96, 208), StatRange(min=198, max=198))
+        tyranitar = Pokemon("tyranitar", 100, "adamant", (252, 252, 0, 0, 0, 4), StatRange(min=159, max=159))
+        gengar = Pokemon("gengar", 100, "adamant", (4, 252, 0, 0, 0, 252), StatRange(min=319, max=319))
+        snorlax = Pokemon("snorlax", 100, "careful", (252, 0, 252, 0, 4, 0), StatRange(min=96, max=96))
+        mewtwo = Pokemon("mewtwo", 100, "timid", (0, 0, 0, 252, 4, 252), StatRange(min=394, max=394))
+        starmie = Pokemon("starmie", 100, "timid", (4, 0, 0, 252, 0, 252), StatRange(min=361, max=361))
+
+        exeggutor.add_move("explosion")
+        exeggutor.add_move("sleeppowder")
+        exeggutor.add_move("solarbeam")
+        exeggutor.add_move("sunnyday")
+
+        tyranitar.add_move("earthquake")
+        tyranitar.add_move("rockslide")
+        tyranitar.add_move("crunch")
+        tyranitar.add_move("brickbreak")
+
+        gengar.add_move("explosion")
+        gengar.add_move("sludgebomb")
+        gengar.add_move("willowisp")
+        gengar.add_move("shadowball")
+
+        snorlax.add_move("curse")
+        snorlax.add_move("amnesia")
+        snorlax.add_move("rest")
+        snorlax.add_move("bodyslam")
+
+        mewtwo.add_move("icebeam")
+        mewtwo.add_move("thunderbolt")
+        mewtwo.add_move("calmmind")
+        mewtwo.add_move("fireblast")
+
+        starmie.add_move("hydropump")
+        starmie.add_move("icebeam")
+        starmie.add_move("thunderbolt")
+        starmie.add_move("rapidspin")
+
+        opponent.active = exeggutor
+        opponent.reserve = [
+            tyranitar,
+            gengar,
+            snorlax,
+            mewtwo,
+            starmie
+        ]
+
+        return opponent
 
     def initialize_team_preview(self, user_json, opponent_pokemon, battle_type):
         self.user.from_json(user_json, first_turn=True)
@@ -108,9 +159,9 @@ class Battle(ABC):
     def start_non_team_preview_battle(self, user_json, opponent_switch_string):
         self.user.from_json(user_json, first_turn=True)
 
-        pkmn_information = opponent_switch_string.split('|')[3]
-        pkmn = Pokemon.from_switch_string(pkmn_information)
-        self.opponent.active = pkmn
+        # pkmn_information = opponent_switch_string.split('|')[3]
+        # pkmn = Pokemon.from_switch_string(pkmn_information)
+        # self.opponent.active = pkmn
 
         self.started = True
         self.rqid = user_json[constants.RQID]
@@ -129,72 +180,7 @@ class Battle(ABC):
         battle_copy.opponent.lock_moves()
         battle_copy.user.lock_active_pkmn_first_turn_moves()
 
-        if battle_copy.user.active.can_mega_evo:
-            # mega-evolving here gives the pkmn the random-battle spread (Serious + 85s)
-            # unfortunately the correct spread is not stored anywhere as of this being written
-            # this only happens on the turn the pkmn mega-evolves - the next turn will be fine
-            battle_copy.user.active.forme_change(get_mega_pkmn_name(battle_copy.user.active.name))
-
-        if guess_mega_evo_opponent and not battle_copy.opponent.mega_revealed() and self.mega_evolve_possible():
-            check_in_sets = battle_copy.battle_type == constants.STANDARD_BATTLE
-            battle_copy.opponent.active.try_convert_to_mega(check_in_sets=check_in_sets)
-
-        # for reserve pokemon only guess their most likely item/ability/spread and guess all moves
-        for pkmn in filter(lambda x: x.is_alive(), battle_copy.opponent.reserve):
-            pkmn.guess_most_likely_attributes()
-
-        try:
-            pokemon_sets = get_pokemon_sets(battle_copy.opponent.active.name)
-        except KeyError:
-            logger.warning("No sets for {}, trying to find most likely attributes".format(battle_copy.opponent.active.name))
-            battle_copy.opponent.active.guess_most_likely_attributes()
-            return [battle_copy]
-
-        possible_spreads = sorted(pokemon_sets[SPREADS_STRING], key=lambda x: x[2], reverse=True)
-        possible_abilities = sorted(pokemon_sets[ABILITY_STRING], key=lambda x: x[1], reverse=True)
-        possible_items = sorted(pokemon_sets[ITEM_STRING], key=lambda x: x[1], reverse=True)
-        possible_moves = sorted(pokemon_sets[MOVES_STRING], key=lambda x: x[1], reverse=True)
-
-        spreads = battle_copy.opponent.active.get_possible_spreads(possible_spreads)
-        items = battle_copy.opponent.active.get_possible_items(possible_items)
-        abilities = battle_copy.opponent.active.get_possible_abilities(possible_abilities)
-        expected_moves, chance_moves = battle_copy.opponent.active.get_possible_moves(possible_moves, battle_copy.battle_type)
-
-        if join_moves_together:
-            chance_move_combinations = [chance_moves]
-        else:
-            number_of_unknown_moves = max(4 - len(battle_copy.opponent.active.moves) - len(expected_moves), 0)
-            chance_move_combinations = list(itertools.combinations(chance_moves, number_of_unknown_moves))
-
-        combinations = list(itertools.product(spreads, items, abilities, chance_move_combinations))
-
-        # create battle clones for each of the combinations
-        battles = list()
-        for c in combinations:
-            new_battle = deepcopy(battle_copy)
-
-            all_moves = [m.name for m in new_battle.opponent.active.moves]
-            all_moves += expected_moves
-            all_moves += c[3]
-            all_moves = [Move(m) for m in all_moves]
-
-            if join_moves_together or set_makes_sense(c[0][0], c[0][1], c[1], c[2], all_moves):
-                new_battle.opponent.active.set_spread(c[0][0], c[0][1])
-                if new_battle.opponent.active.name == 'ditto':
-                    new_battle.opponent.active.stats = battle_copy.opponent.active.stats
-                new_battle.opponent.active.item = c[1]
-                new_battle.opponent.active.ability = c[2]
-                for m in expected_moves:
-                    new_battle.opponent.active.add_move(m)
-                for m in c[3]:
-                    new_battle.opponent.active.add_move(m)
-
-                logger.debug("Possible set for opponent's {}:\t{} {} {} {} {}".format(battle_copy.opponent.active.name, c[0][0], c[0][1], c[1], c[2], all_moves))
-                battles.append(new_battle)
-
-            new_battle.opponent.lock_moves()
-
-        return battles if battles else [battle_copy]
+        return [battle_copy]
 
     def create_state(self):
         user_active = TransposePokemon.from_state_pokemon_dict(self.user.active.to_dict())
@@ -448,14 +434,14 @@ class Battler:
 
 class Pokemon:
 
-    def __init__(self, name: str, level: int, nature="serious", evs=(85,) * 6):
+    def __init__(self, name: str, level: int, nature="serious", evs=(85,) * 6, speed_range: StatRange = None):
         self.name = normalize_name(name)
         self.nickname = None
         self.base_name = self.name
         self.level = level
         self.nature = nature
         self.evs = evs
-        self.speed_range = StatRange(min=0, max=float("inf"))
+        self.speed_range = StatRange(min=0, max=float("inf")) if speed_range is None else speed_range
 
         try:
             self.base_stats = pokedex[self.name][constants.BASESTATS]

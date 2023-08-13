@@ -6,7 +6,7 @@ COPY --from=debian-with-gambit /usr/local/bin/gambit-enummixed /usr/local/bin
 
 WORKDIR /showdown
 
-ARG BATTLE_BOT=nash_equilibrium
+ARG BATTLE_BOT=abluble
 ENV BATTLE_BOT=$BATTLE_BOT
 
 ARG WEBSOCKET_URI=sim.smogon.com:8000

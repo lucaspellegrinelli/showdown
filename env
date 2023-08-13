@@ -1,0 +1,7 @@
+BATTLE_BOT=abluble
+WEBSOCKET_URI=sim.smogon.com:8000
+PS_USERNAME=desafiobot
+PS_PASSWORD=desafiobot
+BOT_MODE=ACCEPT_CHALLENGE
+POKEMON_MODE=gen3ubers
+TEAM_NAME=desafiopokemon/current
