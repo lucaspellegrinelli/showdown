@@ -117,6 +117,7 @@ def pick_safest_move_using_dynamic_search_depth(battles):
         logger.debug("Opponent Options: {}".format(opponent_options))
         logger.debug("Search depth: {}".format(search_depth))
         all_scores = get_payoff_matrix(mutator, user_options, opponent_options, depth=search_depth, prune=True)
+        logger.debug("All Scores: {}".format(all_scores))
 
     else:
         raise ValueError("less than 1 battle?: {}".format(battles))
