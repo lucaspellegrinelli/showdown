@@ -54,13 +54,60 @@ smart_team_preview = {
     }
 }
 
+def get_player_team():
+    exeggutor = Pokemon("exeggutor", 100, "lonely", (0, 0, 0, 204, 96, 208), StatRange(min=198, max=198))
+    tyranitar = Pokemon("tyranitar", 100, "adamant", (252, 252, 0, 0, 0, 4), StatRange(min=159, max=159))
+    gengar = Pokemon("gengar", 100, "adamant", (4, 252, 0, 0, 0, 252), StatRange(min=319, max=319))
+    snorlax = Pokemon("snorlax", 100, "careful", (252, 0, 252, 0, 4, 0), StatRange(min=96, max=96))
+    mewtwo = Pokemon("mewtwo", 100, "timid", (0, 0, 0, 252, 4, 252), StatRange(min=394, max=394))
+    starmie = Pokemon("starmie", 100, "timid", (4, 0, 0, 252, 0, 252), StatRange(min=361, max=361))
+
+    exeggutor.add_move("explosion")
+    exeggutor.add_move("sleeppowder")
+    exeggutor.add_move("solarbeam")
+    exeggutor.add_move("sunnyday")
+
+    tyranitar.add_move("earthquake")
+    tyranitar.add_move("rockslide")
+    tyranitar.add_move("crunch")
+    tyranitar.add_move("brickbreak")
+
+    gengar.add_move("explosion")
+    gengar.add_move("sludgebomb")
+    gengar.add_move("willowisp")
+    gengar.add_move("shadowball")
+
+    snorlax.add_move("curse")
+    snorlax.add_move("amnesia")
+    snorlax.add_move("rest")
+    snorlax.add_move("bodyslam")
+
+    mewtwo.add_move("icebeam")
+    mewtwo.add_move("thunderbolt")
+    mewtwo.add_move("calmmind")
+    mewtwo.add_move("fireblast")
+
+    starmie.add_move("hydropump")
+    starmie.add_move("icebeam")
+    starmie.add_move("thunderbolt")
+    starmie.add_move("rapidspin")
+
+    return [
+        exeggutor,
+        tyranitar,
+        gengar,
+        snorlax,
+        mewtwo,
+        starmie
+    ]
+
 
 class Battle(ABC):
 
     def __init__(self, battle_tag):
         self.battle_tag = battle_tag
         self.user = Battler()
-        self.opponent = self.build_opponent()
+        self.opponent = Battler()
         self.weather = None
         self.field = None
         self.trick_room = False
@@ -78,57 +125,6 @@ class Battle(ABC):
         self.time_remaining = None
 
         self.request_json = None
-
-    def build_opponent(self):
-        opponent = Battler()
-
-        exeggutor = Pokemon("exeggutor", 100, "lonely", (0, 0, 0, 204, 96, 208), StatRange(min=198, max=198))
-        tyranitar = Pokemon("tyranitar", 100, "adamant", (252, 252, 0, 0, 0, 4), StatRange(min=159, max=159))
-        gengar = Pokemon("gengar", 100, "adamant", (4, 252, 0, 0, 0, 252), StatRange(min=319, max=319))
-        snorlax = Pokemon("snorlax", 100, "careful", (252, 0, 252, 0, 4, 0), StatRange(min=96, max=96))
-        mewtwo = Pokemon("mewtwo", 100, "timid", (0, 0, 0, 252, 4, 252), StatRange(min=394, max=394))
-        starmie = Pokemon("starmie", 100, "timid", (4, 0, 0, 252, 0, 252), StatRange(min=361, max=361))
-
-        exeggutor.add_move("explosion")
-        exeggutor.add_move("sleeppowder")
-        exeggutor.add_move("solarbeam")
-        exeggutor.add_move("sunnyday")
-
-        tyranitar.add_move("earthquake")
-        tyranitar.add_move("rockslide")
-        tyranitar.add_move("crunch")
-        tyranitar.add_move("brickbreak")
-
-        gengar.add_move("explosion")
-        gengar.add_move("sludgebomb")
-        gengar.add_move("willowisp")
-        gengar.add_move("shadowball")
-
-        snorlax.add_move("curse")
-        snorlax.add_move("amnesia")
-        snorlax.add_move("rest")
-        snorlax.add_move("bodyslam")
-
-        mewtwo.add_move("icebeam")
-        mewtwo.add_move("thunderbolt")
-        mewtwo.add_move("calmmind")
-        mewtwo.add_move("fireblast")
-
-        starmie.add_move("hydropump")
-        starmie.add_move("icebeam")
-        starmie.add_move("thunderbolt")
-        starmie.add_move("rapidspin")
-
-        opponent.active = exeggutor
-        opponent.reserve = [
-            tyranitar,
-            gengar,
-            snorlax,
-            mewtwo,
-            starmie
-        ]
-
-        return opponent
 
     def initialize_team_preview(self, user_json, opponent_pokemon, battle_type):
         self.user.from_json(user_json, first_turn=True)
@@ -159,9 +155,15 @@ class Battle(ABC):
     def start_non_team_preview_battle(self, user_json, opponent_switch_string):
         self.user.from_json(user_json, first_turn=True)
 
-        # pkmn_information = opponent_switch_string.split('|')[3]
-        # pkmn = Pokemon.from_switch_string(pkmn_information)
-        # self.opponent.active = pkmn
+        player_team = get_player_team()
+        for pokemon in player_team:
+            if pokemon.name in opponent_switch_string.lower():
+                self.opponent.active = pokemon
+            else:
+                self.opponent.reserve.append(pokemon)
+
+        logger.info("Opponent active: {}".format(self.opponent.active))
+        logger.info("Opponent reserve: {}".format(self.opponent.reserve))
 
         self.started = True
         self.rqid = user_json[constants.RQID]
